@@ -1,0 +1,40 @@
+﻿<ResourceDictionary xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation" xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml">
+
+    <DrawingImage x:Key="PhoneDrawingImage">
+        <DrawingImage.Drawing>
+            <DrawingGroup ClipGeometry="M0,0 V16 H16 V0 H0 Z">
+                <GeometryDrawing Brush="#FFF" Geometry="F1 M16,16z M0,0z M11,1A1,1,0,0,1,12,2L12,14A1,1,0,0,1,11,15L5,15A1,1,0,0,1,4,14L4,2A1,1,0,0,1,5,1L11,1z M5,0A2,2,0,0,0,3,2L3,14A2,2,0,0,0,5,16L11,16A2,2,0,0,0,13,14L13,2A2,2,0,0,0,11,0L5,0z" />
+                <GeometryDrawing Brush="#FFF" Geometry="F1 M16,16z M0,0z M8,14A1,1,0,1,0,8,12A1,1,0,0,0,8,14z" />
+            </DrawingGroup>
+        </DrawingImage.Drawing>
+    </DrawingImage>
+
+
+
+    <DrawingImage x:Key="uploadDrawingImage">
+        <DrawingImage.Drawing>
+            <DrawingGroup ClipGeometry="M0,0 V384.97 H384.97 V0 H0 Z">
+                <DrawingGroup Opacity="1">
+                    <DrawingGroup Opacity="1">
+                        <GeometryDrawing Brush="#FF000000" Geometry="F1 M384.97,384.97z M0,0z M372.939,264.641C366.298,264.641,360.909,270.031,360.909,276.671L360.909,360.883 24.061,360.883 24.061,276.671C24.061,270.03 18.671,264.641 12.031,264.641 5.391,264.641 0,270.031 0,276.671L0,372.913C0,379.554,5.39,384.943,12.03,384.943L372.939,384.943C379.58,384.943,384.969,379.553,384.969,372.913L384.969,276.671C384.97,270.019,379.58,264.641,372.939,264.641z" />
+                        <GeometryDrawing Brush="#FF000000" Geometry="F1 M384.97,384.97z M0,0z M117.067,103.507L180.527,40.949 180.527,276.659C180.527,283.3 185.965,288.689 192.678,288.689 199.391,288.689 204.829,283.299 204.829,276.659L204.829,40.95 268.289,103.508C273.029,108.212 280.728,108.212 285.468,103.508 290.208,98.804 290.22,91.189 285.468,86.497L201.268,3.50000000000001C196.576,-1.15599999999999,188.684,-1.10799999999999,184.077,3.50000000000001L99.888,86.496C95.136,91.2 95.148,98.815 99.888,103.507 104.628,108.211 112.327,108.211 117.067,103.507z" />
+                    </DrawingGroup>
+                </DrawingGroup>
+            </DrawingGroup>
+        </DrawingImage.Drawing>
+    </DrawingImage>
+
+    <DrawingImage x:Key="DarkModeDrawingImage">
+        <DrawingImage.Drawing>
+            <DrawingGroup ClipGeometry="M0,0 V24 H24 V0 H0 Z">
+                <DrawingGroup Opacity="1">
+                    <DrawingGroup Opacity="1">
+                        <GeometryDrawing Brush="#FF212121" Geometry="F1 M24,24z M0,0z M12,22C17.5228475,22 22,17.5228475 22,12 22,6.4771525 17.5228475,2 12,2 6.4771525,2 2,6.4771525 2,12 2,17.5228475 6.4771525,22 12,22z M12,20.5L12,3.5C16.6944204,3.5 20.5,7.30557963 20.5,12 20.5,16.6944204 16.6944204,20.5 12,20.5z" />
+                    </DrawingGroup>
+                </DrawingGroup>
+            </DrawingGroup>
+        </DrawingImage.Drawing>
+    </DrawingImage>
+
+
+</ResourceDictionary>

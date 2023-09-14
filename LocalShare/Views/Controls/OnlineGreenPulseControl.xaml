@@ -1,0 +1,162 @@
+﻿<UserControl
+    x:Class="LocalShare.Views.Controls.OnlineGreenPulseControl"
+    xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+    xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+    xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+    xmlns:local="clr-namespace:LocalShare.Views.Controls"
+    xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+    d:DesignHeight="450"
+    d:DesignWidth="800"
+    mc:Ignorable="d">
+
+    <UserControl.Resources>
+        <Style x:Key="EllipseStyle" TargetType="Ellipse">
+            <Setter Property="Width" Value="20" />
+            <Setter Property="Height" Value="20" />
+        </Style>
+    </UserControl.Resources>
+
+
+
+    <Grid>
+
+        <!--  Ellipse - G1  -->
+
+        <Ellipse
+            x:Name="EG_1"
+            HorizontalAlignment="Center"
+            VerticalAlignment="Center"
+            Fill="Green"
+            Style="{StaticResource EllipseStyle}" />
+
+        <!--  Ellipse - G2  -->
+
+        <Ellipse
+            x:Name="EG_2"
+            HorizontalAlignment="Center"
+            VerticalAlignment="Center"
+            Fill="Green"
+            Style="{StaticResource EllipseStyle}" />
+
+        <!--  Ellipse - G3  -->
+
+        <Ellipse
+            x:Name="EG_3"
+            HorizontalAlignment="Center"
+            VerticalAlignment="Center"
+            Fill="Green"
+            Style="{StaticResource EllipseStyle}" />
+
+
+        <!--  // Toggle Button //  -->
+
+        <Ellipse
+            x:Name="EG4"
+            HorizontalAlignment="Center"
+            VerticalAlignment="Center"
+            Fill="LimeGreen"
+            Style="{StaticResource EllipseStyle}">
+            <Ellipse.Triggers>
+                <EventTrigger RoutedEvent="Window.Loaded">
+                    <BeginStoryboard x:Name="Ellipse_Activated">
+
+                        <Storyboard>
+
+                            <!--  G1 Animation  -->
+
+                            <DoubleAnimation
+                                BeginTime="00:00:00"
+                                RepeatBehavior="Forever"
+                                Storyboard.TargetName="EG_1"
+                                Storyboard.TargetProperty="(Ellipse.Width)"
+                                From="20"
+                                To="60"
+                                Duration="00:00:02" />
+
+                            <DoubleAnimation
+                                BeginTime="00:00:00"
+                                RepeatBehavior="Forever"
+                                Storyboard.TargetName="EG_1"
+                                Storyboard.TargetProperty="(Ellipse.Height)"
+                                From="20"
+                                To="60"
+                                Duration="00:00:02" />
+
+                            <DoubleAnimation
+                                BeginTime="00:00:00"
+                                RepeatBehavior="Forever"
+                                Storyboard.TargetName="EG_1"
+                                Storyboard.TargetProperty="Opacity"
+                                From="1.0"
+                                To="0.0"
+                                Duration="00:00:02" />
+
+                            <!--  G2 Animation  -->
+
+                            <DoubleAnimation
+                                BeginTime="00:00:01"
+                                RepeatBehavior="Forever"
+                                Storyboard.TargetName="EG_2"
+                                Storyboard.TargetProperty="(Ellipse.Width)"
+                                From="20"
+                                To="60"
+                                Duration="00:00:02" />
+
+                            <DoubleAnimation
+                                BeginTime="00:00:01"
+                                RepeatBehavior="Forever"
+                                Storyboard.TargetName="EG_2"
+                                Storyboard.TargetProperty="(Ellipse.Height)"
+                                From="20"
+                                To="60"
+                                Duration="00:00:02" />
+
+                            <DoubleAnimation
+                                BeginTime="00:00:01"
+                                RepeatBehavior="Forever"
+                                Storyboard.TargetName="EG_2"
+                                Storyboard.TargetProperty="Opacity"
+                                From="1.0"
+                                To="0.0"
+                                Duration="00:00:02" />
+
+                            <!--  G3 Animation  -->
+
+                            <DoubleAnimation
+                                BeginTime="00:00:02"
+                                RepeatBehavior="Forever"
+                                Storyboard.TargetName="EG_3"
+                                Storyboard.TargetProperty="(Ellipse.Width)"
+                                From="20"
+                                To="60"
+                                Duration="00:00:02" />
+
+                            <DoubleAnimation
+                                BeginTime="00:00:02"
+                                RepeatBehavior="Forever"
+                                Storyboard.TargetName="EG_3"
+                                Storyboard.TargetProperty="(Ellipse.Height)"
+                                From="20"
+                                To="60"
+                                Duration="00:00:02" />
+
+                            <DoubleAnimation
+                                BeginTime="00:00:02"
+                                RepeatBehavior="Forever"
+                                Storyboard.TargetName="EG_3"
+                                Storyboard.TargetProperty="Opacity"
+                                From="1.0"
+                                To="0.0"
+                                Duration="00:00:02" />
+
+
+                        </Storyboard>
+
+                    </BeginStoryboard>
+                </EventTrigger>
+            </Ellipse.Triggers>
+
+        </Ellipse>
+
+    </Grid>
+</UserControl>
