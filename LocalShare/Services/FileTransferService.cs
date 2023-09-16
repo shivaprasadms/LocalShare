@@ -1,9 +1,12 @@
 ﻿using LocalShare.Models;
+using LocalShare.Utility;
 using System;
+using System.Diagnostics;
 using System.IO;
 using System.Net.Sockets;
 using System.Text;
 using System.Threading.Tasks;
+using System.Timers;
 using System.Windows;
 
 namespace LocalShare.Services
@@ -11,71 +14,110 @@ namespace LocalShare.Services
     public class FileTransferService
     {
 
-        public static async Task SendToClient(TcpClientModel client, string path)
+        private static Object LOCK = new Object();
+
+        public static async Task SendToClient(TcpClientModel client, string filePath)
         {
-            //var client = ActiveTcpConnections.Instance.Connections.FirstOrDefault(conn => conn.ClientIp == clientip);
 
-            /*
+            lock (LOCK)
+            {
+                client.AddFilesToQueue(filePath);
+                if (client.IsSendingFile) return;
 
-             1. get the client object
-             2. push the file path to the queue
-             3. check if any file is being transferred
-             4. if yes push to queue 
-            5 if not just start transfer
-
-
-             */
+            }
 
             try
             {
+                client.IsSendingFile = true;
 
                 NetworkStream stream = client.TcpConnection.GetStream();
 
-                string fileName = Path.GetFileName(path);
 
-                FileInfo fileInfo = new FileInfo(path);
-
-                string fileSize = fileInfo.Length.ToString();
-
-                string fileInfoString = $"{fileName}:{fileSize}:";
-
-
-                byte[] fileInfobuffer = new byte[Encoding.UTF8.GetByteCount(fileInfoString)];
-
-
-                Encoding.UTF8.GetBytes(fileInfoString, 0, fileInfoString.Length, fileInfobuffer, 0);
-
-
-                await stream.WriteAsync(fileInfobuffer, 0, fileInfobuffer.Length);
-
-                client.CurrentSendingFileName = fileName;
-                client.CurrentSendingFileSize = fileSize;
-
-
-
-
-                await Task.Delay(2000);
-
-                using (FileStream fileStream = File.OpenRead(path))
+                while (!client.IsQueueEmpty())
                 {
-                    byte[] buffer = new byte[8192]; // 8 KB buffer
+
+
+                    string path = client.PopFileFromQueue();
+
+                    string fileName = Path.GetFileName(path);
+
+                    FileInfo fileInfo = new FileInfo(path);
+
+                    string fileSize = fileInfo.Length.ToString();
+
+                    long fileSizeInBytes = long.Parse(fileSize);
+
+                    long copy = fileSizeInBytes;
+
+                    string fileInfoString = $"{fileName}:{fileSize}:"; // <300 length
+
+                    //int fileInfoStringByteCount = Encoding.UTF8.GetByteCount(fileInfoString);
+
+                    //byte[] fileSizeHeader = new byte[fileInfoStringByteCount];
+                    //fileSizeHeader = Encoding.UTF8.GetBytes(fileInfoString.Length.ToString());
+
+
+                    //await stream.WriteAsync(fileSizeHeader, 0, fileSizeHeader.Length);
 
 
 
+                    // byte[] fileInfobuffer = new byte[Encoding.UTF8.GetByteCount(fileInfoString)];
 
-                    //int byt = 0;
-                    //byte[] signal = new byte[6];
-                    //await stream.ReadAsync(signal, 0, byt);
+                    byte[] fileInfobuffer = new byte[275];
+
+
+                    Encoding.UTF8.GetBytes(fileInfoString, 0, fileInfoString.Length, fileInfobuffer, 0);
+
+
+                    await stream.WriteAsync(fileInfobuffer, 0, fileInfobuffer.Length);
+
+
+                    client.CurrentSendingFileName = fileName;
+                    client.CurrentSendingFileSize = FormatFileSize.GetSize(fileSizeInBytes);
+
+
 
                     int bytesRead = 0;
-                    while ((bytesRead = await fileStream.ReadAsync(buffer, 0, buffer.Length)) > 0)
+                    long completed = 0;
+                    Stopwatch stopwatch = new Stopwatch();
+
+                    Timer timer = new Timer(300);
+                    timer.Elapsed += async (sender, e) => await UpdateUI(client, completed, fileSizeInBytes, stopwatch.Elapsed.TotalSeconds);
+
+
+
+
+                    using (FileStream fileStream = File.OpenRead(path))
                     {
-                        await stream.WriteAsync(buffer, 0, bytesRead);
+                        byte[] buffer = new byte[8192];
+
+                        timer.Start();
+                        stopwatch.Start();
+
+                        while ((bytesRead = await fileStream.ReadAsync(buffer, 0, buffer.Length)) > 0)
+                        {
+                            await stream.WriteAsync(buffer, 0, bytesRead);
+
+                            completed += bytesRead;
+
+                        }
+
+
+
                     }
+
+                    byte[] signal = new byte[4];
+
+                    await stream.ReadAsync(signal, 0, 4);
+
+                    timer.Dispose();
 
                 }
 
-                client.CurrentSendingFileName = " ";
+                client.IsSendingFile = false;
+                client.ResetProperties();
+
+
 
 
             }
@@ -84,6 +126,39 @@ namespace LocalShare.Services
 
                 MessageBox.Show(ex.Message);
             }
+
+
+        }
+
+
+
+
+        private static async Task UpdateUI(TcpClientModel client, long bytesRead, long fileSizeInBytes, double timeInSeconds)
+        {
+            await Task.Run(() =>
+             {
+
+                 double speed = (double)bytesRead / 1024.0 / 1024.0 / timeInSeconds;
+
+                 client.CurrentSendingFileSpeed = $"{Math.Round(speed, 2)} MB/s";
+
+                 double progressPercentage = ((double)bytesRead / fileSizeInBytes) * 100;
+
+                 client.CurrentSendingFilePercentage = progressPercentage;
+
+                 int timeLeftInSeconds = (int)((fileSizeInBytes - bytesRead) / (bytesRead / timeInSeconds));
+
+
+                 client.CurrentSendingFileTimeLeft = $"{timeLeftInSeconds} seconds";
+
+             });
+
+
+            //Math.Round((double)bytesRead / 1048576.0, 2)}MB of {Math.Round((double)fileSizeInBytes / 1048576.0, 2)
+
+
+
+
 
         }
 

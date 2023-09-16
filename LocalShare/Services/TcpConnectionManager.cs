@@ -66,7 +66,7 @@ namespace LocalShare.Services
                 var obj = new TcpClientModel("PIXEL", ((IPEndPoint)client.Client.RemoteEndPoint).Address.ToString(), client);
                 connections.AddConnection(obj);
 
-                await FileReceivingService.ReceiveFromClient(obj);
+                //await FileReceivingService.ReceiveFromClient(obj);
 
 
             }

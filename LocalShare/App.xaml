@@ -2,10 +2,11 @@
     x:Class="LocalShare.App"
     xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
     xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+    xmlns:controls="clr-namespace:LocalShare.Views.Controls"
     xmlns:local="clr-namespace:LocalShare"
     xmlns:ui="http://schemas.modernwpf.com/2019"
     xmlns:view="clr-namespace:LocalShare.Views"
-    xmlns:viewmodel="clr-namespace:LocalShare.ViewModels" xmlns:controls="clr-namespace:LocalShare.Views.Controls">
+    xmlns:viewmodel="clr-namespace:LocalShare.ViewModels">
     <Application.Resources>
 
 
@@ -14,11 +15,11 @@
         <ResourceDictionary>
 
 
-           
+
 
             <ResourceDictionary.MergedDictionaries>
 
-                
+
 
                 <ui:ThemeResources>
                     <ui:ThemeResources.ThemeDictionaries>
@@ -53,19 +54,19 @@
 
             </ResourceDictionary.MergedDictionaries>
 
-            <DataTemplate  DataType="{x:Type TypeName=viewmodel:DeviceOnlineViewModel}">
+            <DataTemplate DataType="{x:Type TypeName=viewmodel:DeviceOnlineViewModel}">
                 <view:DevicesOnline />
             </DataTemplate>
 
-            <DataTemplate  DataType="{x:Type TypeName=viewmodel:SettingsViewModel}">
-            <controls:SearchingDevices />
-        </DataTemplate>
+            <DataTemplate DataType="{x:Type TypeName=viewmodel:SettingsViewModel}">
+                <controls:SearchingDevices />
+            </DataTemplate>
 
         </ResourceDictionary>
-        
-       
 
-        
+
+
+
 
     </Application.Resources>
 </Application>

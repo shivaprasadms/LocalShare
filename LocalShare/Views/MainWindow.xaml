@@ -47,20 +47,19 @@
 
             <ui:NavigationView.MenuItems>
 
-                <ui:NavigationViewItem>
+                <ui:NavigationViewItem IsEnabled="False">
                     <TextBlock
                         Padding="10"
                         FontFamily="Raleway"
                         FontSize="34"
                         FontWeight="Thin"
-                        IsEnabled="False"
                         Text="LocalShare" />
                 </ui:NavigationViewItem>
 
                 <ui:NavigationViewItem
                     Height="50"
                     Content="Devices Online"
-                    IsSelected="True"                    >
+                    IsSelected="True">
                     <ui:NavigationViewItem.Icon>
                         <ui:FontIcon FontFamily="Segoe MDL2 Assets" Glyph="&#xE704;" />
                     </ui:NavigationViewItem.Icon>

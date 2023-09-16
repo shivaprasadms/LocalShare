@@ -1,10 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Net.Sockets;
-using System.Text;
-using System.Threading.Tasks;
-using System.Windows;
+﻿using System.Net.Sockets;
 
 namespace LocalShare.Interfaces
 {
@@ -19,6 +13,14 @@ namespace LocalShare.Interfaces
         string CurrentReceivingFileName { get; set; }
         string CurrentSendingFileSize { get; set; }
         string CurrentReceivingFileSize { get; set; }
-        Queue<string> FilePathQueue { get; set; }
+        //private ConcurrentBag<string> FilePathQueue { get; set; }
+
+        void AddFilesToQueue(string path);
+
+        void ResetProperties();
+
+        string PopFileFromQueue();
+
+
     }
 }

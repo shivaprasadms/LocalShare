@@ -198,7 +198,7 @@
                             Margin="0,10,0,0px"
                             Padding="5px"
                             Style="{DynamicResource TextBlockStyles}"
-                            Text="Manhunt.Unabomber.S01E03.Fruit.Of.The.Poisonous.Tree.1080p.AMZN.WEBRip.x265.HEVC.2CH-MRN.mkv"
+                            Text="{Binding CurrentSendingFileName}"
                             TextTrimming="CharacterEllipsis"
                             TextWrapping="NoWrap" />
 
@@ -223,7 +223,7 @@
                             Margin="10px"
                             Padding="5px"
                             Style="{DynamicResource TextBlockStyles}"
-                            Text="500MB" />
+                            Text="{Binding CurrentSendingFileSize}" />
 
 
                         <TextBlock
@@ -241,7 +241,7 @@
                             Margin="5px"
                             Padding="5px"
                             Style="{DynamicResource TextBlockStyles}"
-                            Text="5.0MBPS" />
+                            Text="{Binding CurrentSendingFileSpeed}" />
 
                         <TextBlock
                             Grid.Row="3"
@@ -261,7 +261,7 @@
                             Margin="10px"
                             Padding="5px"
                             Style="{DynamicResource TextBlockStyles}"
-                            Text="55 seconds" />
+                            Text="{Binding CurrentSendingFileTimeLeft}" />
 
 
                         <ui:ProgressBar
@@ -269,7 +269,7 @@
                             Grid.ColumnSpan="4"
                             Margin="0,10,0,0"
                             IsEnabled="True"
-                            Value="75" />
+                            Value="{Binding CurrentSendingFilePercentage}" />
 
 
 
@@ -327,7 +327,7 @@
                             Margin="0,10,0,0px"
                             Padding="5px"
                             Style="{DynamicResource TextBlockStyles}"
-                            Text="Manhunt.Unabomber.S01E03.Fruit.Of.The.Poisonous.Tree.1080p.AMZN.WEBRip.x265.HEVC.2CH-MRN.mkv"
+                            Text="{Binding CurrentReceivingFileSize}"
                             TextTrimming="CharacterEllipsis"
                             TextWrapping="NoWrap" />
 
@@ -352,7 +352,7 @@
                             Margin="10px"
                             Padding="5px"
                             Style="{DynamicResource TextBlockStyles}"
-                            Text="500MB" />
+                            Text="{Binding CurrentReceivingFileSize}" />
 
 
                         <TextBlock
@@ -370,7 +370,7 @@
                             Margin="5px"
                             Padding="5px"
                             Style="{DynamicResource TextBlockStyles}"
-                            Text="5.0MBPS" />
+                            Text="{Binding CurrentReceivingFileSpeed}" />
 
                         <TextBlock
                             Grid.Row="3"
@@ -390,7 +390,7 @@
                             Margin="10px"
                             Padding="5px"
                             Style="{DynamicResource TextBlockStyles}"
-                            Text="55 seconds" />
+                            Text="{Binding CurrentReceivingFileTimeLeft}" />
 
 
                         <ui:ProgressBar
@@ -398,7 +398,7 @@
                             Grid.ColumnSpan="4"
                             Margin="0,10,0,0"
                             IsEnabled="True"
-                            Value="75" />
+                            Value="{Binding CurrentReceivingFilePercentage}" />
 
 
 

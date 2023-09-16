@@ -7,9 +7,6 @@ namespace LocalShare.Services
     class NavigationService : ObservableObject, INavigationService
     {
 
-
-
-
         private ViewModel _currentView;
 
         private readonly Func<Type, ViewModel> viewModelFactory;

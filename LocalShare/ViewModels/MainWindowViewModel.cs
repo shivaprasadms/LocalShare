@@ -14,14 +14,16 @@ namespace LocalShare.ViewModels
         }
 
         public RelayCommand DevicesOnlineCommand { get; set; }
+
         public RelayCommand SettingsOnlineCommand { get; set; }
 
         public MainWindowViewModel(INavigationService navigationService)
         {
             Navigation = navigationService;
+
             DevicesOnlineCommand = new RelayCommand(o => Navigation.NavigateTo<DeviceOnlineViewModel>());
 
-            SettingsOnlineCommand = new RelayCommand(o => { Navigation.NavigateTo<SettingsViewModel>(); }, o => true);
+            SettingsOnlineCommand = new RelayCommand(o => { Navigation.NavigateTo<SettingsViewModel>(); });
 
             Navigation.NavigateTo<DeviceOnlineViewModel>();
         }
