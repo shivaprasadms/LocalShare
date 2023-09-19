@@ -1,25 +1,35 @@
-﻿using System.Net.Sockets;
+﻿using System;
+using System.Net.Sockets;
 
 namespace LocalShare.Interfaces
 {
     interface ITcpClientModel
     {
         string ClientName { get; set; }
-        string ClientIp { get; set; }
-        TcpClient TcpConnection { get; set; }
-        bool IsSendingFile { get; set; }
-        bool IsReceivingFile { get; set; }
-        string CurrentSendingFileName { get; set; }
-        string CurrentReceivingFileName { get; set; }
-        string CurrentSendingFileSize { get; set; }
-        string CurrentReceivingFileSize { get; set; }
-        //private ConcurrentBag<string> FilePathQueue { get; set; }
 
-        void AddFilesToQueue(string path);
+        string ClientIp { get; set; }
+
+        TcpClient TcpConnection { get; set; }
+
+        bool IsSendingFile { get; set; }
+
+        bool IsReceivingFile { get; set; }
+
+        string CurrentSendingFileName { get; set; }
+
+        string CurrentReceivingFileName { get; set; }
+
+        string CurrentSendingFileSize { get; set; }
+
+        string CurrentReceivingFileSize { get; set; }
+
+        //ConcurrentQueue<Tuple<string, string[]>> FilePathQueue { get; set; }
+
+        void AddFilesToQueue(Tuple<string, string[]> path);
 
         void ResetProperties();
 
-        string PopFileFromQueue();
+        Tuple<string, string[]> PopFileFromQueue();
 
 
     }

@@ -14,7 +14,7 @@ namespace LocalShare
     public partial class App : Application
     {
 
-        private TcpConnectionManager? TcpManager;
+        private TcpConnectionManager? TcpConnManager;
 
 
         public static IHost? AppHost { get; private set; }
@@ -32,7 +32,7 @@ namespace LocalShare
                 services.AddSingleton<INavigationService, NavigationService>();
                 services.AddSingleton<Func<Type, ViewModel>>(serviceProvider => viewModelType => (ViewModel)serviceProvider.GetRequiredService(viewModelType));
 
-                services.AddSingleton<MainWindow>(serviceProvider => new MainWindow
+                services.AddSingleton(serviceProvider => new MainWindow
                 {
                     DataContext = serviceProvider.GetRequiredService<MainWindowViewModel>()
                 }); ;
@@ -48,16 +48,16 @@ namespace LocalShare
             await AppHost!.StartAsync();
 
             var startupForm = AppHost.Services.GetRequiredService<MainWindow>();
-            // startupForm.DataContext = AppHost.Services.GetRequiredService<DeviceOnlineViewModel>();
+
             startupForm.Show();
 
             base.OnStartup(e);
 
-            TcpManager = AppHost.Services.GetRequiredService<TcpConnectionManager>(); // error here because this constructor needs activetcpconnection
+            TcpConnManager = AppHost.Services.GetRequiredService<TcpConnectionManager>();
 
-            MulticastService.Broadcast(TcpManager.GetPort());
+            MulticastService.Broadcast(TcpConnManager.GetPort());
 
-            await TcpManager.StartListening();
+            await TcpConnManager.StartListening();
 
 
 

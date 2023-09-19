@@ -16,116 +16,148 @@ namespace LocalShare.Services
 
         private static Object LOCK = new Object();
 
-        public static async Task SendToClient(TcpClientModel client, string filePath)
+        public static async Task SendToClient(TcpClientModel client, Tuple<string, string[]> filePath, bool isFolder)
         {
 
             lock (LOCK)
             {
                 client.AddFilesToQueue(filePath);
+
                 if (client.IsSendingFile) return;
 
             }
 
-            try
-            {
-                client.IsSendingFile = true;
 
-                NetworkStream stream = client.TcpConnection.GetStream();
+            await Task.Factory.StartNew(async () =>
+             {
 
+                 try
+                 {
+                     client.IsSendingFile = true;
 
-                while (!client.IsQueueEmpty())
-                {
+                     NetworkStream stream = client.TcpConnection.GetStream();
 
+                     while (!client.IsQueueEmpty())
+                     {
 
-                    string path = client.PopFileFromQueue();
+                         var fileTuple = client.PopFileFromQueue();
 
-                    string fileName = Path.GetFileName(path);
+                         foreach (var path in fileTuple.Item2)
+                         {
 
-                    FileInfo fileInfo = new FileInfo(path);
+                             string fileName = Path.GetFileName(path);
 
-                    string fileSize = fileInfo.Length.ToString();
+                             FileInfo fileInfo = new FileInfo(path);
 
-                    long fileSizeInBytes = long.Parse(fileSize);
+                             string fileSize = fileInfo.Length.ToString();
 
-                    long copy = fileSizeInBytes;
+                             long fileSizeInBytes = long.Parse(fileSize);
 
-                    string fileInfoString = $"{fileName}:{fileSize}:"; // <300 length
+                             long copy = fileSizeInBytes;
 
-                    //int fileInfoStringByteCount = Encoding.UTF8.GetByteCount(fileInfoString);
+                             string fileInfoString = $"{fileName}:{fileSize}:{fileTuple.Item1}:"; // <300 length
 
-                    //byte[] fileSizeHeader = new byte[fileInfoStringByteCount];
-                    //fileSizeHeader = Encoding.UTF8.GetBytes(fileInfoString.Length.ToString());
+                             int length = 0;
 
+                             if (fileInfoString.Length > 0 && fileInfoString.Length < 9)
+                             {
+                                 length = 1;
+                             }
+                             else if (fileInfoString.Length > 10 && fileInfoString.Length < 99)
+                             {
+                                 length = 2;
+                             }
+                             else
+                             {
+                                 length = 3;
+                             }
 
-                    //await stream.WriteAsync(fileSizeHeader, 0, fileSizeHeader.Length);
-
-
-
-                    // byte[] fileInfobuffer = new byte[Encoding.UTF8.GetByteCount(fileInfoString)];
-
-                    byte[] fileInfobuffer = new byte[275];
-
-
-                    Encoding.UTF8.GetBytes(fileInfoString, 0, fileInfoString.Length, fileInfobuffer, 0);
-
-
-                    await stream.WriteAsync(fileInfobuffer, 0, fileInfobuffer.Length);
-
-
-                    client.CurrentSendingFileName = fileName;
-                    client.CurrentSendingFileSize = FormatFileSize.GetSize(fileSizeInBytes);
+                             string len = length.ToString();
 
 
+                             int fileInfoStringByteCount = Encoding.UTF8.GetByteCount(fileInfoString);
 
-                    int bytesRead = 0;
-                    long completed = 0;
-                    Stopwatch stopwatch = new Stopwatch();
+                             byte[] fileSizeHeader = new byte[fileInfoStringByteCount];
+                             fileSizeHeader = Encoding.UTF8.GetBytes(fileInfoString.Length.ToString());
 
-                    Timer timer = new Timer(300);
-                    timer.Elapsed += async (sender, e) => await UpdateUI(client, completed, fileSizeInBytes, stopwatch.Elapsed.TotalSeconds);
+                             await stream.WriteAsync(Encoding.UTF8.GetBytes(len), 0, len.Length);
 
+                             await stream.WriteAsync(fileSizeHeader, 0, fileSizeHeader.Length);
 
 
 
-                    using (FileStream fileStream = File.OpenRead(path))
-                    {
-                        byte[] buffer = new byte[8192];
+                             byte[] fileInfobuffer = new byte[Encoding.UTF8.GetByteCount(fileInfoString)];
 
-                        timer.Start();
-                        stopwatch.Start();
-
-                        while ((bytesRead = await fileStream.ReadAsync(buffer, 0, buffer.Length)) > 0)
-                        {
-                            await stream.WriteAsync(buffer, 0, bytesRead);
-
-                            completed += bytesRead;
-
-                        }
+                             //                             byte[] fileInfobuffer = new byte[275];
 
 
+                             Encoding.UTF8.GetBytes(fileInfoString, 0, fileInfoString.Length, fileInfobuffer, 0);
 
-                    }
 
-                    byte[] signal = new byte[4];
+                             await stream.WriteAsync(fileInfobuffer, 0, fileInfobuffer.Length);
 
-                    await stream.ReadAsync(signal, 0, 4);
 
-                    timer.Dispose();
-
-                }
-
-                client.IsSendingFile = false;
-                client.ResetProperties();
+                             client.CurrentSendingFileName = fileName;
+                             client.CurrentSendingFileSize = FormatFileSize.GetSize(fileSizeInBytes);
 
 
 
+                             int bytesRead = 0;
+                             long completed = 0;
+                             Stopwatch stopwatch = new Stopwatch();
 
-            }
-            catch (Exception ex)
-            {
+                             Timer timer = new Timer(300);
+                             timer.Elapsed += async (sender, e) => await UpdateUI(client, completed, fileSizeInBytes, stopwatch.Elapsed.TotalSeconds);
 
-                MessageBox.Show(ex.Message);
-            }
+                             long pg = fileSizeInBytes;
+
+
+                             using (FileStream fileStream = File.OpenRead(path))
+                             {
+                                 byte[] buffer = new byte[8192];
+
+                                 timer.Start();
+                                 stopwatch.Start();
+
+                                 while ((bytesRead = await fileStream.ReadAsync(buffer, 0, buffer.Length)) > 0)
+                                 {
+                                     await stream.WriteAsync(buffer, 0, bytesRead);
+
+                                     pg -= bytesRead;
+                                     if (pg < 0) break;
+
+                                     completed += bytesRead;
+
+                                 }
+
+
+
+                             }
+
+                             //  await Task.Delay(1500);
+
+                             // byte[] signal = new byte[4];
+
+                             // await stream.ReadAsync(signal, 0, 4);
+
+                             timer.Dispose();
+                         }
+
+                     }
+
+                     client.IsSendingFile = false;
+                     client.ResetProperties();
+
+
+
+
+                 }
+                 catch (Exception ex)
+                 {
+
+                     MessageBox.Show(ex.Message);
+                 }
+             }, TaskCreationOptions.LongRunning);
 
 
         }

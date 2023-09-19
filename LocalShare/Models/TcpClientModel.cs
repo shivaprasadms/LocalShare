@@ -1,5 +1,6 @@
 ﻿using LocalShare.Interfaces;
 using LocalShare.ViewModels;
+using System;
 using System.Collections.Concurrent;
 using System.Net.Sockets;
 
@@ -7,6 +8,8 @@ namespace LocalShare.Models
 {
     public class TcpClientModel : ViewModel, ITcpClientModel
     {
+
+        #region "Properties for UI"
 
         public string ClientName { get; set; }
 
@@ -118,9 +121,9 @@ namespace LocalShare.Models
             set { SetProperty(ref currentSendingFilePercentage, value, nameof(CurrentSendingFilePercentage)); }
         }
 
-        private int currentReceivingFilePercentage;
+        private double currentReceivingFilePercentage;
 
-        public int CurrentReceivingFilePercentage
+        public double CurrentReceivingFilePercentage
         {
             get { return currentReceivingFilePercentage; }
             set { SetProperty(ref currentReceivingFilePercentage, value, nameof(CurrentReceivingFilePercentage)); }
@@ -143,12 +146,11 @@ namespace LocalShare.Models
         }
 
 
+        #endregion
+
+        private ConcurrentQueue<Tuple<string, string[]>> FilePathQueue { get; set; }
 
 
-
-
-
-        private ConcurrentQueue<string> FilePathQueue { get; set; }
 
         public TcpClientModel(string Name, string IP, TcpClient Connection)
         {
@@ -160,14 +162,14 @@ namespace LocalShare.Models
 
         }
 
-        public void AddFilesToQueue(string path)
+        public void AddFilesToQueue(Tuple<string, string[]> path)
         {
             FilePathQueue.Enqueue(path);
         }
 
-        public string PopFileFromQueue()
+        public Tuple<string, string[]> PopFileFromQueue()
         {
-            string returnValue;
+            Tuple<string, string[]> returnValue;
             FilePathQueue.TryDequeue(out returnValue);
             return returnValue;
         }

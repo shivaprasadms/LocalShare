@@ -9,17 +9,9 @@
     xmlns:viewmodel="clr-namespace:LocalShare.ViewModels">
     <Application.Resources>
 
-
-
-
         <ResourceDictionary>
 
-
-
-
             <ResourceDictionary.MergedDictionaries>
-
-
 
                 <ui:ThemeResources>
                     <ui:ThemeResources.ThemeDictionaries>

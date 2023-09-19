@@ -52,29 +52,32 @@ namespace LocalShare.ViewModels
             {
                 Title = "LocalShare Send File",
                 Filter = "All Files|*.*",
-                InitialDirectory = Environment.GetFolderPath(Environment.SpecialFolder.MyComputer)
+                InitialDirectory = Environment.GetFolderPath(Environment.SpecialFolder.MyComputer),
+                Multiselect = true
             };
 
 
             if (openFileDialog.ShowDialog() == true)
             {
 
-                string selectedFilePath = openFileDialog.FileName;
+                string[] selectedFilePath = openFileDialog.FileNames;
 
                 var clientIP = (sender as TcpClientModel).ClientIp;
 
                 var client = Clients.Connections.FirstOrDefault(client => client.ClientIp == clientIP);
 
-
-                await FileTransferService.SendToClient(client, selectedFilePath);
-
+                await FileTransferService.SendToClient(client, new Tuple<string, string[]>("/", selectedFilePath), false);
 
 
             }
         }
 
-        private async void ExecuteSendFolderCommand(object obj)
+        private async void ExecuteSendFolderCommand(object sender)
         {
+
+            var clientIP = (sender as TcpClientModel).ClientIp;
+
+            var client = Clients.Connections.FirstOrDefault(client => client.ClientIp == clientIP);
 
             using (var fbd = new Forms.FolderBrowserDialog())
             {
@@ -83,6 +86,8 @@ namespace LocalShare.ViewModels
                 if (result == Forms.DialogResult.OK && !string.IsNullOrWhiteSpace(fbd.SelectedPath))
                 {
                     string[] files = Directory.GetFiles(fbd.SelectedPath);
+
+                    await FileTransferService.SendToClient(client, new Tuple<string, string[]>("/" + Path.GetFileName(fbd.SelectedPath), files), true);
 
                 }
             }

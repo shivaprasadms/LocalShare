@@ -33,40 +33,35 @@ namespace LocalShare.Services
         public async Task StartListening()
         {
 
-
-            TcpClient client;
-
             try
             {
-                client = await TcpListener.AcceptTcpClientAsync();
+                while (true)
+                {
+                    TcpClient client = await TcpListener.AcceptTcpClientAsync();
 
-
-                await HandleClientAsync(client);
-
-
-
+                    HandleClient(client);
+                }
 
             }
             catch (Exception ex)
             {
-
                 Debug.WriteLine(ex.Message);
             }
 
-
-
-
-
         }
 
-        private async Task HandleClientAsync(TcpClient client)
+        private async Task HandleClient(TcpClient client)
         {
             try
             {
-                var obj = new TcpClientModel("PIXEL", ((IPEndPoint)client.Client.RemoteEndPoint).Address.ToString(), client);
-                connections.AddConnection(obj);
+                var clientModel = new TcpClientModel("PIXEL", ((IPEndPoint)client.Client.RemoteEndPoint).Address.ToString(), client);
+                connections.AddConnection(clientModel);
 
-                //await FileReceivingService.ReceiveFromClient(obj);
+
+
+                await FileReceivingService.ReceiveFromClient(clientModel);
+
+
 
 
             }

@@ -1,6 +1,4 @@
 ﻿using System;
-using System.Collections.Generic;
-using System.Linq;
 using System.Net;
 using System.Net.Sockets;
 using System.Text;
@@ -11,16 +9,20 @@ namespace LocalShare.Services
     class MulticastService
     {
 
-        
+
         public static void Broadcast(int tcpPort)
         {
             Task.Factory.StartNew(async () =>
             {
-                using (UdpClient udpClient = new UdpClient(42345))
+                using (UdpClient udpClient = new UdpClient(52345))
                 {
-                    IPAddress MulticastAddress = IPAddress.Parse("239.0.0.1");
+                    IPAddress MulticastAddress = IPAddress.Parse("226.1.1.1");
+
+                    udpClient.EnableBroadcast = true;
+
+                    IPEndPoint endPoint = new IPEndPoint(MulticastAddress, 52345);
+
                     udpClient.JoinMulticastGroup(MulticastAddress);
-                    IPEndPoint endPoint = new IPEndPoint(MulticastAddress, 42345);
 
                     while (true)
                     {
@@ -28,7 +30,7 @@ namespace LocalShare.Services
 
                         byte[] data = Encoding.UTF8.GetBytes(message);
                         udpClient.Send(data, data.Length, endPoint);
-                        await Task.Delay(2000);
+                        await Task.Delay(1000);
                     }
 
                 }
