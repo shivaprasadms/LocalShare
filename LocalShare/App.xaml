@@ -15,29 +15,10 @@
 
                 <ui:ThemeResources>
                     <ui:ThemeResources.ThemeDictionaries>
-                        <ResourceDictionary x:Key="Dark">
-                            <SolidColorBrush x:Key="DeviceCardBackground" Color="#141414" />
-                            <Style x:Key="TextBlockStyles" TargetType="TextBlock">
-                                <Setter Property="FontSize" Value="16" />
-                                <Setter Property="Foreground" Value="White" />
-                            </Style>
-                        </ResourceDictionary>
-
-                        <ResourceDictionary x:Key="Light">
-                            <SolidColorBrush x:Key="DeviceCardBackground" Color="#E4E6EB" />
-
-
-                            <Style x:Key="TextBlockStyles" TargetType="TextBlock">
-                                <Setter Property="FontSize" Value="16" />
-                                <Setter Property="Foreground" Value="Black" />
-                            </Style>
-                        </ResourceDictionary>
-
+                        <ResourceDictionary x:Key="Dark" Source="/Views/Resources/DarkMode.xaml" />
+                        <ResourceDictionary x:Key="Light" Source="/Views/Resources/LightMode.xaml" />
                     </ui:ThemeResources.ThemeDictionaries>
-
                 </ui:ThemeResources>
-
-
 
                 <ui:XamlControlsResources />
 
@@ -51,14 +32,16 @@
             </DataTemplate>
 
             <DataTemplate DataType="{x:Type TypeName=viewmodel:SettingsViewModel}">
-                <controls:SearchingDevices />
+                <view:SettingsView />
+            </DataTemplate>
+
+
+            <DataTemplate DataType="{x:Type TypeName=viewmodel:AboutViewModel}">
+                <view:AboutPage />
             </DataTemplate>
 
         </ResourceDictionary>
 
-
-
-
-
     </Application.Resources>
+
 </Application>

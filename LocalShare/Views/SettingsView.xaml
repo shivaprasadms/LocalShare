@@ -5,12 +5,81 @@
     xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
     xmlns:local="clr-namespace:LocalShare.Views"
     xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+    xmlns:ui="http://schemas.modernwpf.com/2019"
+    xmlns:vm="clr-namespace:LocalShare.ViewModels"
     Title="SettingsView"
+    d:DataContext="{d:DesignInstance Type=vm:SettingsViewModel}"
     d:DesignHeight="450"
     d:DesignWidth="800"
     mc:Ignorable="d">
 
-    <Grid Background="#fefefe">
-        <Label Content="hiii" />
+
+    <Grid>
+
+        <Grid.RowDefinitions>
+            <RowDefinition Height="25" />
+            <RowDefinition Height="auto" />
+            <RowDefinition Height="auto" />
+        </Grid.RowDefinitions>
+
+        <Grid.ColumnDefinitions>
+            <ColumnDefinition Width="25" />
+            <ColumnDefinition Width="auto" />
+        </Grid.ColumnDefinitions>
+
+        <TextBlock
+            Grid.Row="1"
+            Grid.Column="1"
+            FontSize="32"
+            Foreground="{DynamicResource SystemControlPageTextBaseHighBrush}"
+            Text="Settings" />
+
+        <ui:SimpleStackPanel
+            Grid.Row="2"
+            Grid.Column="1"
+            Margin="0,30,0,0">
+
+            <ui:SimpleStackPanel Margin="0,10,0,20" Orientation="Horizontal">
+
+                <Label
+                    Padding="0,5,20,0"
+                    Content="Save Path"
+                    FontSize="16" />
+
+                <TextBox
+                    MinWidth="200"
+                    Margin="0,0,20,0"
+                    IsReadOnly="True"
+                    Text="{Binding SavePath}" />
+
+                <Button Command="{Binding ChangeSavePathCommand}">
+                    <ui:FontIcon FontFamily="Segoe MDL2 Assets" Glyph="&#xE70F;" />
+                </Button>
+
+            </ui:SimpleStackPanel>
+
+            <CheckBox
+                Content="Minimize to Tray on close"
+                FontSize="16"
+                IsChecked="{Binding MinimizeToTray}" />
+
+            <CheckBox
+                Content="Launch application on startup"
+                FontSize="16"
+                IsChecked="{Binding RunAtStartup}" />
+
+
+
+
+
+
+
+
+        </ui:SimpleStackPanel>
+
+
+
+
+
     </Grid>
 </Page>

@@ -1,8 +1,4 @@
 ﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 
 namespace LocalShare.Utility
 {
@@ -10,7 +6,7 @@ namespace LocalShare.Utility
     {
         public static string GetSize(long fileSizeInBytes)
         {
-            string[] sizeSuffixes = { "B", "KB", "MB", "GB", "TB", "PB", "EB", "ZB", "YB" };
+            string[] sizeSuffixes = { "B", "KB", "MB", "GB", "TB" };
             const int byteConversion = 1024;
 
             if (fileSizeInBytes == 0)

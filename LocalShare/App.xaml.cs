@@ -1,4 +1,5 @@
-﻿using LocalShare.Interfaces;
+﻿using LocalShare.Configuration;
+using LocalShare.Interfaces;
 using LocalShare.Services;
 using LocalShare.ViewModels;
 using Microsoft.Extensions.DependencyInjection;
@@ -24,6 +25,7 @@ namespace LocalShare
             AppHost = Host.CreateDefaultBuilder().ConfigureServices((hostContext, services) =>
             {
 
+                services.AddSingleton<AppSettingsManager>();
                 services.AddSingleton<ActiveTcpConnections>();
                 services.AddSingleton<TcpConnectionManager>();
                 services.AddSingleton<DeviceOnlineViewModel>();
@@ -32,9 +34,10 @@ namespace LocalShare
                 services.AddSingleton<INavigationService, NavigationService>();
                 services.AddSingleton<Func<Type, ViewModel>>(serviceProvider => viewModelType => (ViewModel)serviceProvider.GetRequiredService(viewModelType));
 
-                services.AddSingleton(serviceProvider => new MainWindow
+
+                services.AddSingleton(serviceProvider => new MainWindow()
                 {
-                    DataContext = serviceProvider.GetRequiredService<MainWindowViewModel>()
+                    DataContext = serviceProvider.GetRequiredService<MainWindowViewModel>(),
                 }); ;
 
 
@@ -57,12 +60,11 @@ namespace LocalShare
 
             MulticastService.Broadcast(TcpConnManager.GetPort());
 
+            //ThemeManager.Current.ApplicationTheme = ApplicationTheme.Light;
+
             await TcpConnManager.StartListening();
 
-
-
         }
-
 
 
 

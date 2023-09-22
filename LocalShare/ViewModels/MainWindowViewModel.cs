@@ -1,9 +1,8 @@
 ﻿using LocalShare.Interfaces;
-using LocalShare.Utility;
 
 namespace LocalShare.ViewModels
 {
-    class MainWindowViewModel : ViewModel
+    public class MainWindowViewModel : ViewModel
     {
         private INavigationService navigation;
 
@@ -13,20 +12,37 @@ namespace LocalShare.ViewModels
             set { navigation = value; RaisePropertyChanged(); }
         }
 
-        public RelayCommand DevicesOnlineCommand { get; set; }
 
-        public RelayCommand SettingsOnlineCommand { get; set; }
 
         public MainWindowViewModel(INavigationService navigationService)
         {
             Navigation = navigationService;
 
-            DevicesOnlineCommand = new RelayCommand(o => Navigation.NavigateTo<DeviceOnlineViewModel>());
+            // DevicesOnlineCommand = new RelayCommand(o => Navigation.NavigateTo<DeviceOnlineViewModel>());
 
-            SettingsOnlineCommand = new RelayCommand(o => { Navigation.NavigateTo<SettingsViewModel>(); });
+            //SettingsOnlineCommand = new RelayCommand(o => Navigation.NavigateTo<SettingsViewModel>());
 
-            Navigation.NavigateTo<DeviceOnlineViewModel>();
+            Navigation.NavigateTo<SettingsViewModel>();
         }
+
+        public void NavigateToPage(string page)
+        {
+            switch (page)
+            {
+                case "DevicesOnline":
+                    Navigation.NavigateTo<DeviceOnlineViewModel>();
+                    break;
+
+                case "Settings":
+                    Navigation.NavigateTo<SettingsViewModel>();
+                    break;
+
+                case "About":
+                    Navigation.NavigateTo<AboutViewModel>();
+                    break;
+            }
+        }
+
 
 
 

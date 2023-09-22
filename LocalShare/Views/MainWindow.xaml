@@ -7,19 +7,21 @@
     xmlns:fw="clr-namespace:SourceChord.FluentWPF;assembly=FluentWPF"
     xmlns:local="clr-namespace:LocalShare"
     xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
-    xmlns:ui="http://schemas.modernwpf.com/2019" xmlns:viewmodels="clr-namespace:LocalShare.ViewModels" d:DataContext="{d:DesignInstance Type=viewmodels:MainWindowViewModel}"
+    xmlns:ui="http://schemas.modernwpf.com/2019"
+    xmlns:viewmodels="clr-namespace:LocalShare.ViewModels"
     Title="MainWindow"
     Width="1050"
     Height="750"
     MinWidth="1050"
     MinHeight="500"
+    d:DataContext="{d:DesignInstance Type=viewmodels:MainWindowViewModel}"
     fw:AcrylicWindow.AcrylicWindowStyle="NoIcon"
     fw:ExtendViewIntoTitleBar="True"
     fw:NoiseOpacity="0"
     fw:PointerTracker.Enabled="True"
     fw:TintOpacity="0.3"
     ui:ThemeManager.IsThemeAware="True"
-    mc:Ignorable="d" MouseDown="Window_MouseDown" >
+    mc:Ignorable="d">
 
 
 
@@ -32,22 +34,25 @@
             <ColumnDefinition Width="*" />
         </Grid.ColumnDefinitions>
 
+
+
+
+
         <ui:NavigationView
             Background="Transparent"
             IsBackButtonVisible="Collapsed"
-            IsBackEnabled="True"
+            IsBackEnabled="False"
             IsPaneOpen="True"
             IsPaneToggleButtonVisible="False"
             IsSettingsVisible="False"
             PaneDisplayMode="Left"
-           
-            >
+            SelectionChanged="NavigationView_SelectionChanged">
 
 
 
             <ui:NavigationView.MenuItems>
 
-                <ui:NavigationViewItem IsEnabled="False">
+                <ui:NavigationViewItem>
                     <TextBlock
                         Padding="10"
                         FontFamily="Raleway"
@@ -59,15 +64,19 @@
                 <ui:NavigationViewItem
                     Height="50"
                     Content="Devices Online"
-                    IsSelected="True">
+                    IsSelected="True"
+                    Tag="DevicesOnline">
                     <ui:NavigationViewItem.Icon>
                         <ui:FontIcon FontFamily="Segoe MDL2 Assets" Glyph="&#xE704;" />
                     </ui:NavigationViewItem.Icon>
                 </ui:NavigationViewItem>
 
-               
-                
-                <ui:NavigationViewItem Height="50" Content="Settings">
+
+
+                <ui:NavigationViewItem
+                    Height="50"
+                    Content="Settings"
+                    Tag="Settings">
                     <ui:NavigationViewItem.Icon>
                         <ui:FontIcon FontFamily="Segoe MDL2 Assets" Glyph="&#xE713;" />
                     </ui:NavigationViewItem.Icon>
@@ -78,7 +87,10 @@
 
 
             <ui:NavigationView.FooterMenuItems>
-                <ui:NavigationViewItem Height="50" Content="About">
+                <ui:NavigationViewItem
+                    Height="50"
+                    Content="About"
+                    Tag="About">
                     <ui:NavigationViewItem.Icon>
                         <ui:FontIcon FontFamily="Segoe MDL2 Assets" Glyph="&#xE946;" />
                     </ui:NavigationViewItem.Icon>
@@ -107,11 +119,13 @@
         <Grid Grid.Column="1" Background="{DynamicResource SystemControlPageBackgroundAltHighBrush}">
 
 
-            <Frame x:Name="ContentFrame" Content="{Binding Path=Navigation.CurrentView}" />
+            <Frame Content="{Binding Path=Navigation.CurrentView}" NavigationUIVisibility="Hidden"/>
+
+
 
             <!--<ContentControl Content="{Binding Path=Navigation.CurrentView}" />-->
 
-            
+
 
 
 
