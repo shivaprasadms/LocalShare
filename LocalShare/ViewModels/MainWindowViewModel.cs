@@ -4,25 +4,18 @@ namespace LocalShare.ViewModels
 {
     public class MainWindowViewModel : ViewModel
     {
-        private INavigationService navigation;
+        private INavigationService _navigation;
 
         public INavigationService Navigation
         {
-            get { return navigation; }
-            set { navigation = value; RaisePropertyChanged(); }
+            get { return _navigation; }
+            set { SetProperty(ref _navigation, value, nameof(Navigation)); }
         }
-
 
 
         public MainWindowViewModel(INavigationService navigationService)
         {
             Navigation = navigationService;
-
-            // DevicesOnlineCommand = new RelayCommand(o => Navigation.NavigateTo<DeviceOnlineViewModel>());
-
-            //SettingsOnlineCommand = new RelayCommand(o => Navigation.NavigateTo<SettingsViewModel>());
-
-            Navigation.NavigateTo<SettingsViewModel>();
         }
 
         public void NavigateToPage(string page)
@@ -42,6 +35,8 @@ namespace LocalShare.ViewModels
                     break;
             }
         }
+
+
 
 
 

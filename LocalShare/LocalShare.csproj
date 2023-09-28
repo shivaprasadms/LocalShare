@@ -12,6 +12,7 @@
     <PackageReference Include="FluentWPF" Version="0.10.2" />
     <PackageReference Include="Microsoft.Extensions.Hosting" Version="7.0.1" />
     <PackageReference Include="ModernWpfUI" Version="0.9.6" />
+    <PackageReference Include="NReco.Logging.File" Version="1.1.6" />
   </ItemGroup>
 
   <ItemGroup>

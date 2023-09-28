@@ -1,29 +1,30 @@
 ﻿using LocalShare.Configuration;
 using LocalShare.Utility;
+using Microsoft.Win32;
 
 namespace LocalShare.ViewModels
 {
     public class SettingsViewModel : ViewModel
     {
-        private readonly AppSettingsManager _appSettings;
+        private readonly AppConfiguration _appConfig;
 
         public RelayCommand ChangeSavePathCommand { get; private set; }
 
-        public SettingsViewModel(AppSettingsManager appSettings)
+        public SettingsViewModel(AppConfiguration appSettings)
         {
-            _appSettings = appSettings;
+            _appConfig = appSettings;
             ChangeSavePathCommand = new RelayCommand(o => ChangeFileSavePath());
         }
 
         public string SavePath
         {
-            get { return _appSettings.LocalShareSavePath; }
+            get { return _appConfig.LocalShareSavePath; }
 
             set
             {
-                if (_appSettings.LocalShareSavePath != value)
+                if (_appConfig.LocalShareSavePath != value)
                 {
-                    _appSettings.ChangeSavePath(value);
+                    _appConfig.ChangeSavePath(value);
                     RaisePropertyChanged(nameof(SavePath));
                 }
             }
@@ -31,11 +32,12 @@ namespace LocalShare.ViewModels
 
         public bool RunAtStartup
         {
-            get { return _appSettings.IsRunAtStartupEnabled; }
+            get { return _appConfig.IsRunAtStartupEnabled; }
 
             set
             {
-                _appSettings.EnableRunAtStartup(value);
+                LaunchAppAtStartup(value);
+                _appConfig.EnableRunAtStartup(value);
                 RaisePropertyChanged(nameof(RunAtStartup));
 
             }
@@ -43,11 +45,11 @@ namespace LocalShare.ViewModels
 
         public bool MinimizeToTray
         {
-            get { return _appSettings.IsMinimizeToTrayEnabled; }
+            get { return _appConfig.IsMinimizeToTrayEnabled; }
 
             set
             {
-                _appSettings.EnableMinimizeToTray(value);
+                _appConfig.EnableMinimizeToTray(value);
                 RaisePropertyChanged(nameof(MinimizeToTray));
 
             }
@@ -65,6 +67,23 @@ namespace LocalShare.ViewModels
 
                 }
             }
+        }
+
+        private void LaunchAppAtStartup(bool value)
+        {
+            RegistryKey? regKey = Registry.CurrentUser.OpenSubKey
+                             ("SOFTWARE\\Microsoft\\Windows\\CurrentVersion\\Run", true);
+
+            if (value)
+            {
+                regKey?.SetValue("LocalShare", System.Environment.ProcessPath);
+            }
+            else
+            {
+                regKey?.DeleteValue("localShare", false);
+            }
+
+
         }
 
 

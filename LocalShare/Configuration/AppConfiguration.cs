@@ -4,14 +4,14 @@ using System.IO;
 
 namespace LocalShare.Configuration
 {
-    public class AppSettingsManager
+    public class AppConfiguration
     {
 
         public string LocalShareSavePath { get; private set; }
         public bool IsRunAtStartupEnabled { get; private set; }
         public bool IsMinimizeToTrayEnabled { get; private set; }
 
-        public AppSettingsManager()
+        public AppConfiguration()
         {
             LocalShareSavePath = ConfigurationManager.AppSettings["LocalShareSavePath"] ?? Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.MyDocuments), "LocalShare");
             IsRunAtStartupEnabled = Convert.ToBoolean(ConfigurationManager.AppSettings["IsRunAtStartupEnabled"]);

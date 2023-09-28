@@ -87,6 +87,7 @@
 
 
             <ui:NavigationView.FooterMenuItems>
+                
                 <ui:NavigationViewItem
                     Height="50"
                     Content="About"
@@ -119,7 +120,7 @@
         <Grid Grid.Column="1" Background="{DynamicResource SystemControlPageBackgroundAltHighBrush}">
 
 
-            <Frame Content="{Binding Path=Navigation.CurrentView}" NavigationUIVisibility="Hidden"/>
+            <Frame Content="{Binding Path=Navigation.CurrentView}" NavigationUIVisibility="Hidden" />
 
 
 

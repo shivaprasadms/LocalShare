@@ -23,6 +23,7 @@ namespace LocalShare.ViewModels
         public DeviceOnlineViewModel(ActiveTcpConnections clients)
         {
             Clients = clients;
+            Clients.AnyClientConnected += SetSearchingSpinnerView;
 
             //Clients.Connections.Add(new TcpClientModel("Pixel 6", "192.168.1.1", new System.Net.Sockets.TcpClient()));
             //Clients.Connections.Add(new TcpClientModel("Pixel 7", "192.168.1.1", new System.Net.Sockets.TcpClient()));
@@ -41,7 +42,7 @@ namespace LocalShare.ViewModels
         public bool SearchingSpinner
         {
             get { return searchingSpinner; }
-            set { SetProperty(ref searchingSpinner, value, nameof(SearchingSpinner)); }
+            set { SetProperty(ref searchingSpinner, value); }
         }
 
 
@@ -74,6 +75,7 @@ namespace LocalShare.ViewModels
 
         private async void ExecuteSendFolderCommand(object sender)
         {
+            Clients.Connections.Clear();
 
             var clientIP = (sender as TcpClientModel).ClientIp;
 
@@ -93,6 +95,12 @@ namespace LocalShare.ViewModels
             }
 
         }
+
+        private void SetSearchingSpinnerView(object _, bool status)
+        {
+            SearchingSpinner = false;
+        }
+
 
 
 
