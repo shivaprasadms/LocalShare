@@ -46,6 +46,7 @@ namespace LocalShare.Services
                 {
                     if (Connections.Count == 0)
                     {
+                        AnyClientConnected?.Invoke(EventArgs.Empty, false);
                         await Task.Delay(2000);
                         continue;
                     }
@@ -59,7 +60,7 @@ namespace LocalShare.Services
                             });
                     }
 
-                    await Task.Delay(2000);
+                    await Task.Delay(1000);
 
                 }
 

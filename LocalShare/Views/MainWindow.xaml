@@ -120,9 +120,16 @@
         <Grid Grid.Column="1" Background="{DynamicResource SystemControlPageBackgroundAltHighBrush}">
 
 
-            <Frame Content="{Binding Path=Navigation.CurrentView}" NavigationUIVisibility="Hidden" />
+            <!--<Frame Content="{Binding Path=Navigation.CurrentView}" NavigationUIVisibility="Hidden" />-->
 
-
+            <ui:Frame Content="{Binding Path=Navigation.CurrentView}"                         
+                          Name="FrameNavbar"
+                          Margin="0,0,0,0"
+                          Height="Auto"
+                          Width="Auto"
+                          NavigationUIVisibility="Hidden"
+                          Focusable="False"
+                          Navigating="FrameNavbar_Navigating" />
 
             <!--<ContentControl Content="{Binding Path=Navigation.CurrentView}" />-->
 

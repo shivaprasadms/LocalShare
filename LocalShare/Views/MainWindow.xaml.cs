@@ -47,6 +47,7 @@ namespace LocalShare
                             break;
 
                         case "Settings":
+
                             viewModel.NavigateToPage(selectedTag);
                             break;
                     }
@@ -54,6 +55,9 @@ namespace LocalShare
             }
         }
 
+        private void FrameNavbar_Navigating(object sender, System.Windows.Navigation.NavigatingCancelEventArgs e)
+        {
 
+        }
     }
 }

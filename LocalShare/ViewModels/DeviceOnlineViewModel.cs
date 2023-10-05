@@ -3,8 +3,8 @@ using LocalShare.Services;
 using LocalShare.Utility;
 using Microsoft.Win32;
 using System;
+using System.Collections.Generic;
 using System.IO;
-using System.Linq;
 using System.Windows.Input;
 using Forms = System.Windows.Forms;
 
@@ -63,33 +63,44 @@ namespace LocalShare.ViewModels
 
                 string[] selectedFilePath = openFileDialog.FileNames;
 
-                var clientIP = (sender as TcpClientModel).ClientIp;
+                var client = (sender as TcpClientModel);
 
-                var client = Clients.Connections.FirstOrDefault(client => client.ClientIp == clientIP);
-
-                await FileTransferService.SendToClient(client, new Tuple<string, string[]>("/", selectedFilePath), false);
-
+                await FileTransferService.SendToClient(client, new List<Tuple<string, string[]>>() { new Tuple<string, string[]>("/", selectedFilePath) }, false);
 
             }
         }
 
         private async void ExecuteSendFolderCommand(object sender)
         {
-            Clients.Connections.Clear();
 
-            var clientIP = (sender as TcpClientModel).ClientIp;
-
-            var client = Clients.Connections.FirstOrDefault(client => client.ClientIp == clientIP);
+            var client = (sender as TcpClientModel);
 
             using (var fbd = new Forms.FolderBrowserDialog())
             {
                 Forms.DialogResult result = fbd.ShowDialog();
 
-                if (result == Forms.DialogResult.OK && !string.IsNullOrWhiteSpace(fbd.SelectedPath))
-                {
-                    string[] files = Directory.GetFiles(fbd.SelectedPath);
+                var selectedPath = fbd.SelectedPath;
 
-                    await FileTransferService.SendToClient(client, new Tuple<string, string[]>("/" + Path.GetFileName(fbd.SelectedPath), files), true);
+                if (result == Forms.DialogResult.OK && !string.IsNullOrWhiteSpace(selectedPath))
+                {
+
+                    string[] rootDirFiles = Directory.GetFiles(selectedPath);
+
+                    List<Tuple<string, string[]>> folder = new();
+
+                    folder.Add(new Tuple<string, string[]>("/" + System.IO.Path.GetFileName(selectedPath), rootDirFiles));
+
+                    var nestedDirectories = Directory.GetDirectories(selectedPath, "*", System.IO.SearchOption.AllDirectories);
+
+                    foreach (var dir in nestedDirectories)
+                    {
+                        string[] nestedDirFiles = Directory.GetFiles(dir);
+                        folder.Add(new Tuple<string, string[]>(dir, nestedDirFiles));
+
+                    }
+
+
+                    await FileTransferService.SendToClient(client, folder, true);
 
                 }
             }
@@ -98,13 +109,13 @@ namespace LocalShare.ViewModels
 
         private void SetSearchingSpinnerView(object _, bool status)
         {
-            SearchingSpinner = false;
+            SearchingSpinner = !status;
         }
 
 
 
 
-
+        // test -> NF -> [nes,demo.txt] -> nes -> dem0.txt
 
 
 

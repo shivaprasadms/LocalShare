@@ -2,6 +2,7 @@
 using LocalShare.ViewModels;
 using System;
 using System.Collections.Concurrent;
+using System.Collections.Generic;
 using System.Net.Sockets;
 
 namespace LocalShare.Models
@@ -162,9 +163,11 @@ namespace LocalShare.Models
 
         }
 
-        public void AddFilesToQueue(Tuple<string, string[]> path)
+        public void AddFilesToQueue(List<Tuple<string, string[]>> fileList)
         {
-            FilePathQueue.Enqueue(path);
+
+            foreach (var path in fileList)
+                FilePathQueue.Enqueue(path);
         }
 
         public Tuple<string, string[]> PopFileFromQueue()
@@ -189,5 +192,6 @@ namespace LocalShare.Models
             CurrentSendingFileSpeed = "";
             CurrentSendingFileTimeLeft = "";
         }
+
     }
 }

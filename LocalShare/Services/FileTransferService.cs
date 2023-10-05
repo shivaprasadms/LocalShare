@@ -1,6 +1,7 @@
 ﻿using LocalShare.Models;
 using LocalShare.Utility;
 using System;
+using System.Collections.Generic;
 using System.Diagnostics;
 using System.IO;
 using System.Net.Sockets;
@@ -16,7 +17,7 @@ namespace LocalShare.Services
 
         private static Object LOCK = new Object();
 
-        public static async Task SendToClient(TcpClientModel client, Tuple<string, string[]> filePath, bool isFolder)
+        public static async Task SendToClient(TcpClientModel client, List<Tuple<string, string[]>> filePath, bool isFolder)
         {
 
             lock (LOCK)
@@ -55,7 +56,7 @@ namespace LocalShare.Services
 
                              long copy = fileSizeInBytes;
 
-                             string fileInfoString = $"{fileName}:{fileSize}:{fileTuple.Item1}:"; // <300 length
+                             string fileInfoString = $"{fileName}:{fileSize}:{fileTuple.Item1.Substring(System.IO.Path.GetPathRoot(fileTuple.Item1).Length).Replace("\\", "/")}:"; // <300 length
 
                              int length = 0;
 

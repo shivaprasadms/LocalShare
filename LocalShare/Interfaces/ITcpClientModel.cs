@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Collections.Generic;
 using System.Net.Sockets;
 
 namespace LocalShare.Interfaces
@@ -25,7 +26,7 @@ namespace LocalShare.Interfaces
 
         //ConcurrentQueue<Tuple<string, string[]>> FilePathQueue { get; set; }
 
-        void AddFilesToQueue(Tuple<string, string[]> path);
+        void AddFilesToQueue(List<Tuple<string, string[]>> path);
 
         void ResetProperties();
 
