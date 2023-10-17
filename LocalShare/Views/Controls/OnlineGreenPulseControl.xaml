@@ -31,14 +31,14 @@
 
         <!--  Ellipse - G2  -->
 
-        <Ellipse
+        <!--<Ellipse
             x:Name="EG_2"
             HorizontalAlignment="Center"
             VerticalAlignment="Center"
             Fill="Green"
             Style="{StaticResource EllipseStyle}" />
 
-        <!--  Ellipse - G3  -->
+        --><!--  Ellipse - G3  --><!--
 
         <Ellipse
             x:Name="EG_3"
@@ -48,7 +48,7 @@
             Style="{StaticResource EllipseStyle}" />
 
 
-        <!--  // Toggle Button //  -->
+        --><!--  // Toggle Button //  --><!--
 
         <Ellipse
             x:Name="EG4"
@@ -62,7 +62,7 @@
 
                         <Storyboard>
 
-                            <!--  G1 Animation  -->
+                            --><!--  G1 Animation  --><!--
 
                             <DoubleAnimation
                                 BeginTime="00:00:00"
@@ -91,7 +91,7 @@
                                 To="0.0"
                                 Duration="00:00:02" />
 
-                            <!--  G2 Animation  -->
+                            --><!--  G2 Animation  --><!--
 
                             <DoubleAnimation
                                 BeginTime="00:00:01"
@@ -120,7 +120,7 @@
                                 To="0.0"
                                 Duration="00:00:02" />
 
-                            <!--  G3 Animation  -->
+                            --><!--  G3 Animation  --><!--
 
                             <DoubleAnimation
                                 BeginTime="00:00:02"
@@ -156,7 +156,7 @@
                 </EventTrigger>
             </Ellipse.Triggers>
 
-        </Ellipse>
+        </Ellipse>-->
 
     </Grid>
 </UserControl>

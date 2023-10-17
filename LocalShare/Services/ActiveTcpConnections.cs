@@ -24,7 +24,7 @@ namespace LocalShare.Services
         public ActiveTcpConnections()
         {
             Connections = new();
-            PollClients();
+            // PollClients();
 
         }
 

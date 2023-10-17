@@ -1,43 +1,24 @@
-﻿using LocalShare.Models;
+﻿using LocalShare.Interfaces;
+using LocalShare.Models;
 using LocalShare.Services;
 using LocalShare.Utility;
-using Microsoft.Win32;
 using System;
-using System.Collections.Generic;
-using System.IO;
+using System.Windows.Forms;
 using System.Windows.Input;
-using Forms = System.Windows.Forms;
 
 namespace LocalShare.ViewModels
 {
-    class DeviceOnlineViewModel : ViewModel
+    public class DeviceOnlineViewModel : ViewModel
     {
 
         public ActiveTcpConnections Clients { get; set; }
-
         public ICommand SendFileCommand { get; set; }
-
         public ICommand SendFolderCommand { get; set; }
-
-
-        public DeviceOnlineViewModel(ActiveTcpConnections clients)
-        {
-            Clients = clients;
-            Clients.AnyClientConnected += SetSearchingSpinnerView;
-
-            //Clients.Connections.Add(new TcpClientModel("Pixel 6", "192.168.1.1", new System.Net.Sockets.TcpClient()));
-            //Clients.Connections.Add(new TcpClientModel("Pixel 7", "192.168.1.1", new System.Net.Sockets.TcpClient()));
-            //Clients.Connections.Add(new TcpClientModel("Pixel 8", "192.168.1.1", new System.Net.Sockets.TcpClient()));
-
-            SendFileCommand = new RelayCommand(ExecuteSendFileCommand);
-
-            SendFolderCommand = new RelayCommand(ExecuteSendFolderCommand);
-
-
-
-        }
+        private readonly ILocalShareTransferService _localShareTransfer;
+        private readonly IDialogService _dialogService;
 
         private bool searchingSpinner = true;
+
 
         public bool SearchingSpinner
         {
@@ -46,10 +27,29 @@ namespace LocalShare.ViewModels
         }
 
 
+        public DeviceOnlineViewModel(ActiveTcpConnections clients, ILocalShareTransferService localShareTransfer, IDialogService dialogService)
+        {
+            Clients = clients;
+            _localShareTransfer = localShareTransfer;
+            _dialogService = dialogService;
+            Clients.AnyClientConnected += SetSearchingSpinnerView;
+
+            // Clients.Connections.Add(new TcpClientModel("Pixel 6", "192.168.1.1", new System.Net.Sockets.TcpClient()));
+            //Clients.Connections.Add(new TcpClientModel("Pixel 7", "192.168.1.1", new System.Net.Sockets.TcpClient()));
+            //Clients.Connections.Add(new TcpClientModel("Pixel 8", "192.168.1.1", new System.Net.Sockets.TcpClient()));
+
+            SendFileCommand = new RelayCommand(ExecuteSendFileCommand);
+            SendFolderCommand = new RelayCommand(ExecuteSendFolderCommand);
+
+        }
+
+
+
+
         private async void ExecuteSendFileCommand(object sender)
         {
 
-            var openFileDialog = new OpenFileDialog
+            var openFileDialog = new Microsoft.Win32.OpenFileDialog
             {
                 Title = "LocalShare Send File",
                 Filter = "All Files|*.*",
@@ -65,7 +65,7 @@ namespace LocalShare.ViewModels
 
                 var client = (sender as TcpClientModel);
 
-                await FileTransferService.SendToClient(client, new List<Tuple<string, string[]>>() { new Tuple<string, string[]>("/", selectedFilePath) }, false);
+                await _localShareTransfer.SendFilesToClient(client, selectedFilePath);
 
             }
         }
@@ -75,34 +75,28 @@ namespace LocalShare.ViewModels
 
             var client = (sender as TcpClientModel);
 
-            using (var fbd = new Forms.FolderBrowserDialog())
+            try
             {
-                Forms.DialogResult result = fbd.ShowDialog();
 
-                var selectedPath = fbd.SelectedPath;
-
-                if (result == Forms.DialogResult.OK && !string.IsNullOrWhiteSpace(selectedPath))
+                var folderBrowser = new OpenFolderDialog()
                 {
-
-                    string[] rootDirFiles = Directory.GetFiles(selectedPath);
-
-                    List<Tuple<string, string[]>> folder = new();
-
-                    folder.Add(new Tuple<string, string[]>("/" + System.IO.Path.GetFileName(selectedPath), rootDirFiles));
-
-                    var nestedDirectories = Directory.GetDirectories(selectedPath, "*", System.IO.SearchOption.AllDirectories);
-
-                    foreach (var dir in nestedDirectories)
-                    {
-                        string[] nestedDirFiles = Directory.GetFiles(dir);
-                        folder.Add(new Tuple<string, string[]>(dir, nestedDirFiles));
-
-                    }
+                    Title = "LocalShare Send Folder",
+                    InitialFolder = "C:\\",
+                    Multiselect = true,
+                };
 
 
-                    await FileTransferService.SendToClient(client, folder, true);
+                if (folderBrowser.ShowDialog() == DialogResult.OK)
+                {
+                    var selectedFolders = folderBrowser.FoldersPaths;
 
+                    await _localShareTransfer.SendFolderToClient(client, selectedFolders.ToArray());
                 }
+
+            }
+            catch (Exception ex)
+            {
+                _dialogService.ShowMessage(ex.Message);
             }
 
         }
@@ -110,13 +104,8 @@ namespace LocalShare.ViewModels
         private void SetSearchingSpinnerView(object _, bool status)
         {
             SearchingSpinner = !status;
+
         }
-
-
-
-
-        // test -> NF -> [nes,demo.txt] -> nes -> dem0.txt
-
 
 
 

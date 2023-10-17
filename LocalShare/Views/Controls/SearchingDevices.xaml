@@ -11,11 +11,10 @@
     mc:Ignorable="d">
     <Grid>
 
-        <StackPanel HorizontalAlignment="Center" Margin="0 60 0 0">
+        <StackPanel Margin="0,60,0,0" HorizontalAlignment="Center">
             <TextBlock
                 Margin="0,40"
                 HorizontalAlignment="Center"
-                FontFamily="Raleway"
                 FontSize="24"
                 Foreground="{DynamicResource TextControlForeground}">
                 Searching for devices in your local network..<LineBreak /><LineBreak />

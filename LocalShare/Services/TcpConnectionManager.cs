@@ -1,7 +1,7 @@
 ﻿using LocalShare.Models;
 using LocalShare.Utility;
+using Microsoft.Extensions.Logging;
 using System;
-using System.Diagnostics;
 using System.Net;
 using System.Net.Sockets;
 using System.Threading.Tasks;
@@ -13,10 +13,14 @@ namespace LocalShare.Services
         private TcpListener TcpListener;
 
         private ActiveTcpConnections connections;
+        private readonly LocalShareReceiver _localShareReceiver;
+        private readonly ILogger<TcpConnectionManager> _logger;
 
-        public TcpConnectionManager(ActiveTcpConnections clients)
+        public TcpConnectionManager(ActiveTcpConnections clients, LocalShareReceiver localShareReceiver, ILogger<TcpConnectionManager> logger)
         {
             connections = clients;
+            _localShareReceiver = localShareReceiver;
+            _logger = logger;
             TcpListener = new TcpListener(LocalNetworkUtility.GetLocalIpAddress(), 0);
             TcpListener.Start();
 
@@ -28,11 +32,8 @@ namespace LocalShare.Services
             return endPoint.Port;
         }
 
-
-
         public async Task StartListening()
         {
-
             try
             {
                 while (true)
@@ -45,30 +46,18 @@ namespace LocalShare.Services
             }
             catch (Exception ex)
             {
-                Debug.WriteLine(ex.Message);
+                _logger.LogError(ex, ex.Message);
             }
 
         }
 
         private async Task HandleClient(TcpClient client)
         {
-            try
-            {
-                var clientModel = new TcpClientModel("PIXEL", ((IPEndPoint)client.Client.RemoteEndPoint).Address.ToString(), client);
-                connections.AddConnection(clientModel);
+            var clientModel = new TcpClientModel("PIXEL", ((IPEndPoint)client.Client.RemoteEndPoint).Address.ToString(), client);
+            connections.AddConnection(clientModel);
 
+            await _localShareReceiver.ReceiveFromClient(clientModel);
 
-
-                await FileReceivingService.ReceiveFromClient(clientModel);
-
-
-
-
-            }
-            catch (Exception ex)
-            {
-                Console.WriteLine($"Client handling error: {ex.Message}");
-            }
         }
 
 

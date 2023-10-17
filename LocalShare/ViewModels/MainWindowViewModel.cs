@@ -13,9 +13,11 @@ namespace LocalShare.ViewModels
         }
 
 
+
         public MainWindowViewModel(INavigationService navigationService)
         {
             Navigation = navigationService;
+
         }
 
         public void NavigateToPage(string page)
@@ -35,14 +37,6 @@ namespace LocalShare.ViewModels
                     break;
             }
         }
-
-
-
-
-
-
-
-
 
     }
 }

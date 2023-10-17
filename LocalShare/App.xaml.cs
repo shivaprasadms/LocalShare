@@ -42,12 +42,15 @@ namespace LocalShare
             services.AddSingleton<DeviceOnlineViewModel>();
             services.AddSingleton<MainWindowViewModel>();
             services.AddSingleton<SettingsViewModel>();
+            services.AddSingleton<IDialogService, DialogService>();
             services.AddSingleton<INavigationService, NavigationService>();
+            services.AddSingleton<ILocalShareTransferService, LocalShareTransfer>();
+            services.AddSingleton<LocalShareReceiver>();
             services.AddSingleton<Func<Type, ViewModel>>(serviceProvider => viewModelType => (ViewModel)serviceProvider.GetRequiredService(viewModelType));
             services.AddLogging(loggingBuilder =>
             {
-                loggingBuilder.AddFile("app.log", append: true);
-                loggingBuilder.SetMinimumLevel(LogLevel.Information);
+                loggingBuilder.AddFile("app.log");
+                loggingBuilder.SetMinimumLevel(LogLevel.Warning);
 
             });
             services.AddSingleton(serviceProvider => new MainWindow()
@@ -56,8 +59,6 @@ namespace LocalShare
             });
 
         }
-
-
 
         protected override async void OnStartup(StartupEventArgs e)
         {
@@ -68,15 +69,7 @@ namespace LocalShare
             var startupForm = AppHost.Services.GetRequiredService<MainWindow>();
             startupForm.Show();
 
-
-
             await InitiateAsync();
-
-
-
-
-
-            //ThemeManager.Current.ApplicationTheme = ApplicationTheme.Light;
 
             await TcpConnManager.StartListening();
 

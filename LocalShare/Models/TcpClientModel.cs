@@ -10,6 +10,8 @@ namespace LocalShare.Models
     public class TcpClientModel : ViewModel, ITcpClientModel
     {
 
+        private readonly object _lock = new object();
+
         #region "Properties for UI"
 
         public string ClientName { get; set; }
@@ -22,10 +24,21 @@ namespace LocalShare.Models
 
         public bool IsSendingFile
         {
-            get { return isSendingFile; }
-            set { SetProperty(ref isSendingFile, value, nameof(IsSendingFile)); }
+            get
+            {
+                lock (_lock)
+                {
+                    return isSendingFile;
+                }
+            }
+            set
+            {
+                lock (_lock)
+                {
+                    SetProperty(ref isSendingFile, value, nameof(IsSendingFile));
+                }
+            }
         }
-
 
         private bool isReceivingFile;
 
@@ -103,9 +116,9 @@ namespace LocalShare.Models
             }
         }
 
-        private double currentReceivingFileSpeed;
+        private string currentReceivingFileSpeed;
 
-        public double CurrentReceivingFileSpeed
+        public string CurrentReceivingFileSpeed
         {
             get { return currentReceivingFileSpeed; }
             set
@@ -138,9 +151,9 @@ namespace LocalShare.Models
             set { SetProperty(ref currentSendingFileTimeLeft, value, nameof(CurrentSendingFileTimeLeft)); }
         }
 
-        private double currentReceivingFileTimeLeft;
+        private string currentReceivingFileTimeLeft;
 
-        public double CurrentReceivingFileTimeLeft
+        public string CurrentReceivingFileTimeLeft
         {
             get { return currentReceivingFileTimeLeft; }
             set { SetProperty(ref currentReceivingFileTimeLeft, value, nameof(CurrentReceivingFileTimeLeft)); }

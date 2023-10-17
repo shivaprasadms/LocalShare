@@ -5,8 +5,18 @@
     <TargetFramework>net6.0-windows</TargetFramework>
     <Nullable>enable</Nullable>
     <UseWPF>true</UseWPF>
-	 <UseWindowsForms>true</UseWindowsForms> 
+	 <UseWindowsForms>true</UseWindowsForms>
+	 <ApplicationIcon>localshare_icon.ico</ApplicationIcon> 
   </PropertyGroup>
+
+  <ItemGroup>
+    <Compile Remove="Services\FileReceivingService.cs" />
+    <Compile Remove="Services\FileTransferService.cs" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <Content Include="localshare_icon.ico" />
+  </ItemGroup>
 
   <ItemGroup>
     <PackageReference Include="FluentWPF" Version="0.10.2" />
