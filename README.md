@@ -5,6 +5,6 @@ LocalShare is used to send and receive files from smartphone to pc and vice-vers
 
 Make sure to install LocalShare Android App and ensure both pc and your phone are connected to same wifi to send & receive files.
 
-![alt text](https://user-images.githubusercontent.com/57284207/284610013-73a10eb7-5368-4e17-bd90-cb49049cc9ce.png)
+![alt text](https://user-images.githubusercontent.com/57284207/284616688-129442bf-165c-49c9-87cb-28cac493e22a.png)
 
 
