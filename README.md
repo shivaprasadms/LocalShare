@@ -7,4 +7,7 @@ Make sure to install LocalShare Android App and ensure both your pc and phone ar
 
 ![alt text](https://user-images.githubusercontent.com/57284207/284616688-129442bf-165c-49c9-87cb-28cac493e22a.png)
 
+Credits :
+UI Library : ModernWPF by Kinnara
+https://github.com/Kinnara/ModernWpf
 
