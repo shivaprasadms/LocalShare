@@ -22,45 +22,52 @@ namespace LocalShare.Services
 
         public async Task ReceiveFromClient(TcpClientModel client)
         {
-
             NetworkStream stream = client.TcpConnection.GetStream();
 
-            await Task.Factory.StartNew(async () =>
+           
+            await Task.Run(async () =>
             {
-
-                while (true)
+                while (client.TcpConnection.Connected)
                 {
                     try
                     {
+                        // Read the length of the file info buffer size string (1 byte)
                         byte[] fileInfoStringLengthBuffer = new byte[1];
+                        int bytesRead = await stream.ReadAsync(fileInfoStringLengthBuffer, 0, 1);
 
-                        await stream.ReadAsync(fileInfoStringLengthBuffer, 0, 1);
+                        if (bytesRead == 0)
+                        {
+                            _logger.LogInformation("Client disconnected");
+                            break;
+                        }
 
-                        byte[] fileInfoBufferSize = new byte[int.Parse(Encoding.UTF8.GetString(fileInfoStringLengthBuffer))];
+                        // Parse how many digits the file info size has
+                        int fileInfoSizeLength = int.Parse(Encoding.UTF8.GetString(fileInfoStringLengthBuffer));
 
-                        await stream.ReadAsync(fileInfoBufferSize, 0, fileInfoBufferSize.Length);
+                        // Read the actual file info size string
+                        byte[] fileInfoBufferSize = new byte[fileInfoSizeLength];
+                        await ReadExactAsync(stream, fileInfoBufferSize, 0, fileInfoSizeLength);
 
-                        byte[] fileInfoStringBuffer = new byte[int.Parse(Encoding.UTF8.GetString(fileInfoBufferSize))];
+                        // Parse the file info size
+                        int fileInfoSize = int.Parse(Encoding.UTF8.GetString(fileInfoBufferSize));
 
-                        await stream.ReadAsync(fileInfoStringBuffer, 0, fileInfoStringBuffer.Length);
+                        // Read the file info string
+                        byte[] fileInfoStringBuffer = new byte[fileInfoSize];
+                        await ReadExactAsync(stream, fileInfoStringBuffer, 0, fileInfoSize);
 
                         client.IsReceivingFile = true;
 
                         string fileInfo = Encoding.UTF8.GetString(fileInfoStringBuffer);
-
                         var fileInfoArray = fileInfo.Split(':');
 
                         string fileName = fileInfoArray[0];
-
                         string fileSize = fileInfoArray[1];
-
-                        string fileType = fileInfoArray[2] == "/" ? "" : fileInfoArray[2]; // refactor this
+                        string fileType = fileInfoArray[2] == "/" ? "" : fileInfoArray[2];
 
                         long fileSizeInBytes = long.Parse(fileSize);
 
                         var updateFileInfoToClient = DisplayInfo.UpdateCurrentReceivingFileInfo(client, fileName, fileSizeInBytes);
 
-                        int bytesRead = 0;
                         long completed = 0;
                         long fs = fileSizeInBytes;
 
@@ -68,54 +75,84 @@ namespace LocalShare.Services
                         Timer timer = new Timer(300);
 
                         timer.Elapsed += async (sender, e) =>
-                        await DisplayInfo.UpdateCurrentReceivingFileProgress(client, completed, fs, stopwatch.Elapsed.TotalSeconds);
+                            await DisplayInfo.UpdateCurrentReceivingFileProgress(client, completed, fs, stopwatch.Elapsed.TotalSeconds);
+
                         await updateFileInfoToClient;
 
-                        var fileSavePath = Path.Combine(System.Environment.GetFolderPath(Environment.SpecialFolder.MyMusic), fileType);
+                        // Fixed: Use Downloads folder instead of Music
+                        var basePath = Environment.GetFolderPath(Environment.SpecialFolder.MyDocuments);
+                        var fileSavePath = string.IsNullOrEmpty(fileType)
+                            ? basePath
+                            : Path.Combine(basePath, fileType);
 
                         if (!string.IsNullOrEmpty(fileType))
                         {
                             Directory.CreateDirectory(fileSavePath);
                         }
 
-
-                        using (FileStream fileStream = new FileStream($"{fileSavePath}/{fileName}", FileMode.Create))
+                        using (FileStream fileStream = new FileStream(Path.Combine(fileSavePath, fileName), FileMode.Create))
                         {
                             byte[] buffer = new byte[8192];
-
 
                             timer.Start();
                             stopwatch.Start();
 
-                            while ((bytesRead = await stream.ReadAsync(buffer, 0, (int)(fileSizeInBytes > 8192 ? 8192 : fileSizeInBytes))) > 0)
+                            long remainingBytes = fileSizeInBytes;
+
+                            while (remainingBytes > 0)
                             {
+                                int toRead = (int)Math.Min(buffer.Length, remainingBytes);
+                                int read = await stream.ReadAsync(buffer, 0, toRead);
 
-                                await fileStream.WriteAsync(buffer, 0, bytesRead);
+                                if (read == 0)
+                                {
+                                    _logger.LogError("Connection lost while receiving file");
+                                    break;
+                                }
 
-                                fileSizeInBytes -= bytesRead;
-                                completed += bytesRead;
-                                if (fileSizeInBytes <= 0) break;
+                                await fileStream.WriteAsync(buffer, 0, read);
 
+                                remainingBytes -= read;
+                                completed += read;
                             }
                         }
 
+                        // Fixed: Stop timer before disposing
+                        timer.Stop();
                         timer.Dispose();
+
                         client.IsReceivingFile = false;
 
+                        _logger.LogInformation($"File received successfully: {fileName}");
+                    }
+                    catch (IOException ioEx)
+                    {
+                        _logger.LogError(ioEx, "Network error during file reception");
+                        break; // Exit on network errors
                     }
                     catch (Exception ex)
                     {
-                        _logger.LogError(ex, ex.Message);
+                        _logger.LogError(ex, "Error receiving file: {Message}", ex.Message);
+                        client.IsReceivingFile = false;
+                        break; // Exit on unexpected errors
                     }
-
                 }
+            });
+        }
 
-            }, TaskCreationOptions.LongRunning);
-
-
-
-
-
+        // Helper method to ensure we read exactly the number of bytes requested
+        private async Task ReadExactAsync(NetworkStream stream, byte[] buffer, int offset, int count)
+        {
+            int totalRead = 0;
+            while (totalRead < count)
+            {
+                int bytesRead = await stream.ReadAsync(buffer, offset + totalRead, count - totalRead);
+                if (bytesRead == 0)
+                {
+                    throw new IOException("Connection closed before all data was received");
+                }
+                totalRead += bytesRead;
+            }
         }
     }
 }
